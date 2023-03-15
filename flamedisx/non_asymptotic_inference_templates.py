@@ -84,6 +84,8 @@ class FrequentistIntervalRatesOnlyTemplates():
         self.sample_other_constraints = sample_other_constraints
         self.rm_bounds = rm_bounds
 
+        self.toy_datasets_background_only = None
+
         self.test_stat_dists = dict()
         self.test_stat_dists_pcl = dict()
         self.observed_test_stats = dict()
@@ -215,6 +217,8 @@ class FrequentistIntervalRatesOnlyTemplates():
         constraint_vals = []
         ts_values_pcl = []
 
+        toy_datasets_background_only = []
+
         # Loop over toys
         for toy in tqdm(range(self.ntoys), desc='Doing toys'):
             simulate_dict = dict()
@@ -260,10 +264,14 @@ class FrequentistIntervalRatesOnlyTemplates():
             unconditional_bfs.append(ts_result[1])
 
             # Now repeat for PCL
-            simulate_dict[f'{signal_source_name}_rate_multiplier'] = 0.
 
-            # Simulate and set data
-            toy_data_pcl = likelihood.simulate(**simulate_dict)
+            # Ensure we use the same background-only toy dataset for every signal model in this toy
+            if self.toy_datasets_background_only is None:
+                simulate_dict[f'{signal_source_name}_rate_multiplier'] = 0.
+                toy_data_pcl = likelihood.simulate(**simulate_dict)
+                toy_datasets_background_only.append(toy_data_pcl)
+            else:
+                toy_data_pcl = self.toy_datasets_background_only[toy]
 
             likelihood.set_data(toy_data_pcl)
 
@@ -280,6 +288,9 @@ class FrequentistIntervalRatesOnlyTemplates():
             for key, value in constraint_extra_args.items():
                 constraint_vals_dict[key] = fd.tf_to_np(value)
             constraint_vals.append(constraint_vals_dict)
+
+        if self.toy_datasets_background_only is None:
+            self.toy_datasets_background_only = toy_datasets_background_only
 
         # Return the test statistic and unconditional best fit
         return ts_values, unconditional_bfs, constraint_vals, ts_values_pcl
