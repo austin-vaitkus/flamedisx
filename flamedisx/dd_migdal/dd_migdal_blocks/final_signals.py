@@ -353,16 +353,6 @@ class MakeS1S2SS(fd.Block):
                                bonus_arg=energy_first,
                                data_tensor=data_tensor,
                                ptensor=ptensor)
-        
-        print('energy_first', energy_first)
-        print('s1 ',s1)
-        print('s2 ',s2)
-        print('s1 mean ',s1_mean)
-        print('s2 mean ',s2_mean)
-        print('s1 var ',s1_var)
-        print('s2 var ',s2_var)
-        print('anti corr ',anti_corr)
-
 
         denominator = 2. * pi * s1_std * s2_std * tf.sqrt(1. - anti_corr * anti_corr)
 
@@ -380,9 +370,7 @@ class MakeS1S2SS(fd.Block):
         acceptance = tf.repeat(acceptance[:, o], tf.shape(probs)[1], axis=1)
         acceptance = tf.repeat(acceptance[:, :, o], tf.shape(probs)[2], axis=2)
         probs *= acceptance
-        
-        tf.print(probs)
-        
+
         return tf.transpose(probs, perm=[0, 2, 1])
 
     def check_data(self):
@@ -786,16 +774,6 @@ class MakeS1S2ER(fd.Block):
         
         anti_corr = s1s2_cov / tf.sqrt(s1_var * s2_var)
         
-        # print('tf.shape(s1)[0]', tf.shape(s1)[0], tf.shape(s1)[1], tf.shape(s1)[2])
-        print('s1 ',s1)
-        print('s2 ',s2)
-        print('s1 mean ',s1_mean)
-        print('s2 mean ',s2_mean)
-        print('s1 var ',s1_var)
-        print('s2 var ',s2_var)
-        print('s1s1 cov ',s1s2_cov)
-        
-
         denominator = 2. * pi * s1_std * s2_std * tf.sqrt(1. - anti_corr * anti_corr)
 
         exp_prefactor = -1. / (2 * (1. - anti_corr * anti_corr))
@@ -812,8 +790,6 @@ class MakeS1S2ER(fd.Block):
         acceptance = tf.repeat(acceptance[:, o], tf.shape(probs)[1], axis=1)
         acceptance = tf.repeat(acceptance[:, :, o], tf.shape(probs)[2], axis=2)
         probs *= acceptance
-        
-        tf.print(probs)
 
         return tf.transpose(probs, perm=[0, 2, 1])
 

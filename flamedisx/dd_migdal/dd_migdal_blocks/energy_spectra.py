@@ -20,7 +20,7 @@ class EnergySpectrumFirstMSU(fd.FirstBlock):
     model_functions = ('get_r_dt_diff_rate', 'get_S2Width_diff_rate')
 
     r_dt_dist = np.load(os.path.join(
-        os.path.dirname(__file__), '../migdal_database/NR_spatial_template_230529.npz'))
+        os.path.dirname(__file__), '../migdal_database/NR_spatial_template_230601.npz'))
 
     r_edges = r_dt_dist['r_edges']
     dt_edges = r_dt_dist['dt_edges']
@@ -160,7 +160,7 @@ class EnergySpectrumFirstIE_CS(EnergySpectrumFirstMSU):
     rates_vs_energy_first = tf.ones(99, dtype=fd.float_type())
 
     r_dt_dist = np.load(os.path.join(
-        os.path.dirname(__file__), '../migdal_database/IE_CS_spatial_template_230529.npz'))
+        os.path.dirname(__file__), '../migdal_database/IE_CS_spatial_template_230601.npz'))
 
     hist_values_r_dt = r_dt_dist['hist_values']
     r_edges = r_dt_dist['r_edges']
@@ -176,14 +176,13 @@ class EnergySpectrumFirstIE_CS(EnergySpectrumFirstMSU):
 @export
 class EnergySpectrumFirstER(EnergySpectrumFirstMSU):
     #: Flat ER energy spectrum
-    energies_first = fd.np_to_tf(np.linspace(0,35,100))
+    energies_first = fd.np_to_tf(np.linspace(0.01,35,100))
     #: Dummy energy spectrum of 1s
     rates_vs_energy_first = tf.cast(np.ones(100,dtype='float')/100, dtype=fd.float_type())
     # rates_vs_energy_first = tf.ones(100, dtype=fd.float_type())
 
     r_dt_dist = np.load(os.path.join(
         os.path.dirname(__file__), '../migdal_database/ER_spatial_template_230529.npz'))
-        # os.path.dirname(__file__), '../migdal_database/IE_CS_spatial_template_230529.npz'))
     
 
     hist_values_r_dt = r_dt_dist['hist_values']
